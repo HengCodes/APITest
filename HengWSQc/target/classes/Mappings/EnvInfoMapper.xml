@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nh.automation.tools.dao.EnvInfoMapper">
+
+	<resultMap type="nh.automation.tools.entity.EnvInfo" id="envInfoResultMapId">
+		<result column="id" property="id" />
+		<result column="envName" property="envName" />
+		<result column="address" property="address" />
+		<result column="mongoDbHost" property="mongoDbHost" />
+		<result column="mongoDbPort" property="mongoDbPort" />
+		<result column="mongoDbUser" property="mongoDbUser" />
+		<result column="mongoDbPwd" property="mongoDbPwd" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, envName, address,mongoDbHost,mongoDbPort,mongoDbUser,mongoDbPwd
+	</sql>
+	<!-- 添加测试地址信息 -->
+	<insert id="insert" parameterType="nh.automation.tools.entity.EnvInfo">
+		insert into envInfo
+		(envName,address,mongoDbHost,mongoDbPort,mongoDbUser,mongoDbPwd) VALUES(#{envName},#{address},#{mongoDbHost},#{mongoDbPort},#{mongoDbUser},#{mongoDbPwd})
+	</insert>
+	<select id="selectEnvByText" parameterType="java.lang.String"
+		resultMap="envInfoResultMapId">
+		select
+		<include refid="Base_Column_List" />
+		from envInfo
+		where 1=1
+		<if test="envName != null and envName != ''">
+			and envName like "%"#{envName}"%"
+		</if>
+	</select>
+	<select id="getAll" resultType="nh.automation.tools.entity.EnvInfo"
+		resultMap="envInfoResultMapId">
+		select
+		<include refid="Base_Column_List" />
+		from envInfo
+		where 1=1
+		order by id;
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		envInfo
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertSelective" parameterType="nh.automation.tools.entity.EnvInfo">
+		insert into envInfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="envName != null">
+				envName,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="envName != null">
+				#{envName,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="nh.automation.tools.entity.EnvInfo">
+		update envInfo
+		<set>
+			<if test="envName != null">
+				envName = #{envName,jdbcType=VARCHAR},
+			</if>
+			<if test="envName != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="nh.automation.tools.entity.EnvInfo">
+		update envInfo
+		set
+		envName = #{envName,jdbcType=VARCHAR},
+		address =
+		#{address,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="envInfoResultMapId">
+		select
+		<include refid="Base_Column_List" />
+		from envInfo
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>

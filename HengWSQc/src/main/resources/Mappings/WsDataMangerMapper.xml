@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="nh.automation.tools.dao.WsDataMangerMapper">
+
+	<resultMap type="nh.automation.tools.entity.WsDataManger" id="WsDataMangerId">
+		<result column="case_id" property="caseId" />
+		<result column="api_name" property="apiName" />
+		<result column="api_host" property="apiHost" />
+		<result column="api_type" property="apiType" />
+		<result column="api_parameter" property="apiParameter" />
+		<result column="expect_result" property="expectResult" />
+		<result column="executedResult" property="executedResult" />
+		<result column="executedStatus" property="executedStatus" />
+		<result column="api_desc" property="apiDese" />
+		<result column="run_time" property="runTime" />
+		<result column="reason" property="reason" />
+		<result column="parameter_type" property="parameterType" />
+		<result column="depend" property="depend" />
+		<result column="depend_status" property="dependStatus" />
+		<result column="executedCode" property="executedCode" />
+		<result column="mongoDbQuery" property="mongoDbQuery" />
+		<result column="runTimeRequest" property="runTimeRequest" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		case_id, api_name,
+		api_host,api_type,api_parameter,expect_result,executedResult,executedStatus,api_desc,run_time,reason,parameter_type,depend,depend_status,executedCode,mongoDbQuery,runTimeRequest
+	</sql>
+
+	<insert id="insert" parameterType="nh.automation.tools.entity.WsDataManger">
+		INSERT INTO testdata
+		(
+		api_name,api_host,api_type,api_parameter,expect_result,
+		api_desc,parameter_type,depend_status,depend,executedCode,mongoDbQuery,runTimeRequest )
+		VALUES
+		(
+		#{apiName},
+		#{apiHost},#{apiType},#{apiParameter},#{expectResult},#{apiDese},#{parameterType},#{dependStatus},#{depend},#{executedCode},#{mongoDbQuery},#{runTimeRequest});
+	</insert>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		testdata where case_id=#{caseId}
+	</delete>
+
+
+	<select id="searchByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="WsDataMangerId">
+		select * from testdata where case_id=#{caseId}
+	</select>
+
+	<update id="updateByPrimaryKey" parameterType="nh.automation.tools.entity.WsDataManger">
+		update testdata
+		set api_name=#{apiName}, api_host=#{apiHost},
+		api_type=#{apiType},api_parameter=#{apiParameter},
+		expect_result=#{expectResult},
+		api_desc=#{apiDese},parameter_type=#{parameterType},depend_status=#{dependStatus},depend=#{depend},executedCode=#{executedCode},mongoDbQuery=#{mongoDbQuery},runTimeRequest=#{runTimeRequest}
+		where
+		case_id=#{caseId}
+	</update>
+
+
+	<select id="searchAPIByText" parameterType="java.lang.String"
+		resultMap="WsDataMangerId">
+		select
+		<include refid="Base_Column_List" />
+		from testdata
+		where 1=1
+		<if test="apiName != null and apiName != ''">
+			and api_name like "%"#{apiName}"%"
+		</if>
+	</select>
+
+	<select id="searchResultByExecutedStatus" parameterType="java.lang.String"
+		resultMap="WsDataMangerId">
+		select
+		<include refid="Base_Column_List" />
+		from testdata
+		where 1=1
+		<if test="executedStatus != null and executedStatus != ''">
+			and executedStatus like "%"#{executedStatus}"%"
+		</if>
+	</select>
+
+	<select id="getAll" resultType="nh.automation.tools.entity.WsDataManger"
+		resultMap="WsDataMangerId">
+		select
+		<include refid="Base_Column_List" />
+		from testdata
+		where 1=1
+		order by id;
+	</select>
+
+
+	<update id="deleteCaseRunResult">
+		update testdata set
+		executedResult=null,executedStatus=null,run_time=null,reason=null
+	</update>
+
+	<select id="searchRunCaseResult" resultMap="WsDataMangerId"
+		parameterType="nh.automation.tools.entity.WsDataManger">
+		select * from testdata
+		<where>
+			<choose>
+				<when test="apiName != null and apiName !=''">
+					api_name like "%${apiName}%" and executedStatus is
+					not
+					null
+				</when>
+				<when test="executedStatus != null and executedStatus !=''">
+					executedStatus like "%${executedStatus}%"
+				</when>
+				<otherwise>
+					executedStatus is not null
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+</mapper>

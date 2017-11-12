@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nh.automation.tools.dao.RunCaseMangerMapper">
+	<update id="updateRunCase" parameterType="nh.automation.tools.entity.WsDataManger">
+		update testdata set
+		executedResult=#{executedResult},executedStatus=#{executedStatus},run_time=#{runTime},reason=#{reason},runTimeResponse=#{runTimeResponse},runTimeRequest=#{runTimeRequest},mongoDbQueryResult=#{mongoDbQueryResult}
+		where case_id=#{caseId}
+	</update>
+	<select id="selectPassCase" parameterType="nh.automation.tools.entity.WsDataManger"
+		resultType="int">
+		select count(*) from testdata where executedStatus="PASS"
+	</select>
+	<select id="searchFailCase" parameterType="nh.automation.tools.entity.WsDataManger"
+		resultType="int">
+		select count(*) from testdata where executedStatus="FAIL"
+	</select>
+</mapper>
